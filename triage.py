@@ -2,6 +2,22 @@
 def triage_ticket(ticket_text):
     text = ticket_text.lower()
 
+    # Keywords for urgent academic problems
+    urgent_academic_keywords = [
+        "exam starts in",
+        "exam starting now",
+        "exam is starting",
+        "exam starts now",
+        "exam in 10 minutes",
+        "exam access",
+        "cannot access exam",
+        "can't access exam",
+        "unable to access exam",
+        "exam submission deadline today",
+        "submission deadline today",
+        "deadline is today",
+    ]
+
     # Keywords for course access issues
     course_access_keywords = [
         "batch is not visible",
@@ -45,22 +61,6 @@ def triage_ticket(ticket_text):
         "reset my email",
     ]
 
-    # Keywords for urgent academic problems
-    urgent_academic_keywords = [
-        "exam starts in",
-        "exam starting now",
-        "exam is starting",
-        "exam starts now",
-        "exam in 10 minutes",
-        "exam access",
-        "cannot access exam",
-        "can't access exam",
-        "unable to access exam",
-        "exam submission deadline today",
-        "submission deadline today",
-        "deadline is today",
-    ]
-
     # Keywords for academic support
     academic_keywords = [
         "assignment",
@@ -71,14 +71,22 @@ def triage_ticket(ticket_text):
         "grades",
         "mathematics",
         "study",
-        "explain",
         "practice questions",
         "exam preparation",
         "how to prepare",
     ]
 
-    # 1. Course access issues
-    if any(word in text for word in course_access_keywords):
+    # 1. Urgent academic problems must be checked first
+    if any(word in text for word in urgent_academic_keywords):
+        category = "Academic Support"
+        priority = "High"
+        action = (
+            "Urgently verify the exam schedule and access, "
+            "then help the student resolve the issue."
+        )
+
+    # 2. Course access issues
+    elif any(word in text for word in course_access_keywords):
         category = "Course Access Issue"
         priority = "High"
         action = (
@@ -86,22 +94,13 @@ def triage_ticket(ticket_text):
             "then check course or batch access."
         )
 
-    # 2. Payment issues
+    # 3. Payment issues
     elif any(word in text for word in payment_keywords):
         category = "Payment Issue"
         priority = "High"
         action = (
             "Review the payment transaction and billing "
             "records, then assist with the issue."
-        )
-
-    # 3. Urgent academic problems
-    elif any(word in text for word in urgent_academic_keywords):
-        category = "Academic Support"
-        priority = "High"
-        action = (
-            "Urgently verify the exam schedule and access, "
-            "then help the student resolve the issue."
         )
 
     # 4. Account issues
@@ -122,7 +121,7 @@ def triage_ticket(ticket_text):
             "to the appropriate support resource."
         )
 
-    # 6. Other questions
+    # 6. General inquiries
     else:
         category = "General Inquiry"
         priority = "Low"
